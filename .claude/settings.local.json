@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@14 . --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --yes)",
+      "Read(//c/Users/zugic/Desktop/**)",
+      "Bash(npx create-next-app@14 wellnesshub --typescript --tailwind --eslint --app --src-dir=false --import-alias=\"@/*\" --yes)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\lib\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\types\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\hooks\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\store\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\components\\\\ui\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\components\\\\layout\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\components\\\\home\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\components\\\\shop\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\components\\\\product\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\components\\\\cart\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\api\\\\checkout\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\api\\\\webhook\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\api\\\\contact\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\api\\\\subscribe\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\api\\\\ab-track\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\shop\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\products\\\\[slug]\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\cart\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\order\\\\success\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\about\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\faq\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\contact\" \"C:\\\\Users\\\\zugic\\\\Desktop\\\\DROPSHIPPING\\\\app\\\\admin\" 2>&1)",
+      "Bash(npm run *)",
+      "Bash(node -e \"console.log\\(require\\('./node_modules/tailwindcss/package.json'\\).version\\)\")",
+      "Bash(grep -v \"^$\")"
+    ]
+  }
+}
