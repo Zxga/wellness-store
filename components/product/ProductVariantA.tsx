@@ -16,18 +16,10 @@ interface Props {
   relatedProducts: Product[];
 }
 
-const OPTIONS_SUPPLY = [
-  { id: '1x',  label: '1 Mask',              desc: 'Perfect starter',  price: 89.99  },
-  { id: '2x',  label: 'Mask + Serum Bundle', desc: 'Most popular',     price: 119.99, badge: 'SAVE 15%' },
-];
-const OPTIONS_TYPE = [
-  { id: 'one-time', label: 'One-Time Purchase', price: null },
-  { id: '2pack',    label: '2-Pack Gift Set',   price: 159.99, badge: 'GIFT READY' },
-];
-const BUNDLES = [
-  { id: 'starter', label: 'Glow Starter', sub: 'LUX-01 + FROST-01',              price: 109.99, badge: 'SAVE $15'   },
-  { id: 'ritual',  label: 'Full Ritual',  sub: 'LUX-01 + FROST-01 + PULSE-01',   price: 149.99, badge: 'BEST VALUE' },
-];
+// Round to nearest-dollar .99 pricing (e.g. 119.97 → 119.99)
+function variantPrice(base: number, multiplier: number): number {
+  return Math.round(base * multiplier) - 0.01;
+}
 
 export default function ProductVariantA({ product, reviews, relatedProducts }: Props) {
   const { addItem, openCart } = useCartStore();
@@ -42,13 +34,29 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
   const benefits = getProductBenefits(product.slug);
   const images = product.images?.length ? product.images : [];
 
-  // Derive price from selected options — bundle > 2-pack > supply > default
+  // All option prices derived from this product's base price
+  const opts = useMemo(() => ({
+    supply: [
+      { id: '1x',  label: '1 Item',              desc: 'Perfect starter', price: product.price },
+      { id: '2x',  label: 'Item + Serum Bundle',  desc: 'Most popular',   price: variantPrice(product.price, 1.3334), badge: 'SAVE 15%' },
+    ],
+    type: [
+      { id: 'one-time', label: 'One-Time Purchase', price: null },
+      { id: '2pack',    label: '2-Pack Gift Set',   price: variantPrice(product.price, 1.778), badge: 'GIFT READY' },
+    ],
+    bundles: [
+      { id: 'starter', label: 'Glow Starter', sub: '+ FROST-01',            price: variantPrice(product.price, 1.222), badge: 'SAVE $15'   },
+      { id: 'ritual',  label: 'Full Ritual',  sub: '+ FROST-01 + PULSE-01', price: variantPrice(product.price, 1.667), badge: 'BEST VALUE' },
+    ],
+  }), [product.price]);
+
+  // Derive active price — bundle > 2-pack > supply > base
   const displayPrice = useMemo(() => {
-    if (bundle) return BUNDLES.find((b) => b.id === bundle)!.price;
-    if (optType === '2pack') return OPTIONS_TYPE[1].price!;
-    if (supply === '2x') return OPTIONS_SUPPLY[1].price;
-    return OPTIONS_SUPPLY[0].price;
-  }, [bundle, optType, supply]);
+    if (bundle) return opts.bundles.find((b) => b.id === bundle)!.price;
+    if (optType === '2pack') return opts.type[1].price!;
+    if (supply === '2x') return opts.supply[1].price;
+    return product.price;
+  }, [bundle, optType, supply, opts, product.price]);
 
   // Trigger pop animation whenever price changes
   const prevPrice = useRef(displayPrice);
@@ -168,7 +176,7 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
           <div className="mb-5">
             <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest mb-3">1. Choose Your Supply</p>
             <div className="grid grid-cols-2 gap-2">
-              {OPTIONS_SUPPLY.map((opt) => (
+              {opts.supply.map((opt) => (
                 <button
                   key={opt.id}
                   onClick={() => { setSupply(opt.id); setBundle(''); }}
@@ -194,7 +202,7 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
           <div className="mb-5">
             <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest mb-3">2. Choose Your Option</p>
             <div className="grid grid-cols-2 gap-2">
-              {OPTIONS_TYPE.map((opt) => (
+              {opts.type.map((opt) => (
                 <button
                   key={opt.id}
                   onClick={() => { setOptType(opt.id); setBundle(''); }}
@@ -221,7 +229,7 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
           <div className="mb-7">
             <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest mb-3">3. Save More With Bundles</p>
             <div className="grid grid-cols-2 gap-2">
-              {BUNDLES.map((b) => (
+              {opts.bundles.map((b) => (
                 <button
                   key={b.id}
                   onClick={() => setBundle(bundle === b.id ? '' : b.id)}
