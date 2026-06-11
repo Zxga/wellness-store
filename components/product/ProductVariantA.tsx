@@ -1,10 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { ShoppingCart, Check } from 'lucide-react';
+import { Check, ShieldCheck, RotateCcw, Truck } from 'lucide-react';
 import { Product, Review } from '@/types';
 import { useCartStore } from '@/store/cart';
-import { formatPrice, getDiscountPercent, getOrCreateSessionId } from '@/lib/utils';
+import { formatPrice, getDiscountPercent, getProductBenefits, getOrCreateSessionId } from '@/lib/utils';
 import StarRating from '@/components/ui/StarRating';
 import CountdownTimer from './CountdownTimer';
 import ReviewsSection from './ReviewsSection';
@@ -16,12 +16,30 @@ interface Props {
   relatedProducts: Product[];
 }
 
+const OPTIONS_SUPPLY = [
+  { id: '1x', label: '1 Mask', desc: 'Perfect starter' },
+  { id: '2x', label: 'Mask + Serum Bundle', desc: 'Most popular', badge: 'SAVE 15%' },
+];
+const OPTIONS_TYPE = [
+  { id: 'one-time', label: 'One-Time Purchase' },
+  { id: '2pack', label: '2-Pack Gift Set', badge: 'GIFT READY' },
+];
+const BUNDLES = [
+  { id: 'starter', label: 'Glow Starter', sub: 'LUX-01 + FROST-01', badge: 'SAVE $15' },
+  { id: 'ritual', label: 'Full Ritual', sub: 'LUX-01 + FROST-01 + PULSE-01', badge: 'BEST VALUE' },
+];
+
 export default function ProductVariantA({ product, reviews, relatedProducts }: Props) {
   const { addItem, openCart } = useCartStore();
-  const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedImg, setSelectedImg] = useState(0);
+  const [supply, setSupply] = useState('1x');
+  const [optType, setOptType] = useState('one-time');
+  const [bundle, setBundle] = useState('');
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const discount = getDiscountPercent(product.price, product.compare_price);
+  const benefits = getProductBenefits(product.slug);
+  const images = product.images?.length ? product.images : [];
 
   useEffect(() => {
     const sessionId = getOrCreateSessionId();
@@ -42,29 +60,30 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
       body: JSON.stringify({ variant: 'A', event: 'add_to_cart', productId: product.id, sessionId }),
     });
     setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => setAdded(false), 1800);
   }
-
-  const images = product.images?.length ? product.images : [
-    'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80',
-  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="grid lg:grid-cols-2 gap-12">
+      <div className="grid lg:grid-cols-2 gap-14">
         {/* Images */}
-        <div>
-          <div className="relative aspect-square rounded-card overflow-hidden bg-gray-50 mb-3">
-            <Image
-              src={images[selectedImage] || images[0]}
-              alt={product.name}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
+        <div className="sticky top-24 self-start">
+          <div className="relative aspect-square rounded-card overflow-hidden border border-white/10 mb-3"
+            style={{ background: '#1F0810', boxShadow: '0 0 80px rgba(194,24,91,0.3)' }}>
+            {/* glow */}
+            <div className="absolute inset-0 glow-radial animate-glow-pulse" />
+            {images[selectedImg] && (
+              <Image
+                src={images[selectedImg]}
+                alt={product.name}
+                fill
+                sizes="(max-width:1024px) 100vw, 50vw"
+                className="object-cover relative z-10"
+                priority
+              />
+            )}
             {discount > 0 && (
-              <span className="absolute top-4 left-4 badge-sale text-sm px-3 py-1">-{discount}% OFF</span>
+              <span className="absolute top-5 left-5 z-20 badge-sale text-sm px-3 py-1">-{discount}%</span>
             )}
           </div>
           {images.length > 1 && (
@@ -72,8 +91,12 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
               {images.map((img, i) => (
                 <button
                   key={i}
-                  onClick={() => setSelectedImage(i)}
-                  className={`relative w-16 h-16 rounded-btn overflow-hidden border-2 transition-colors ${selectedImage === i ? 'border-primary' : 'border-gray-200'}`}
+                  onClick={() => setSelectedImg(i)}
+                  className={`relative w-16 h-16 rounded-card overflow-hidden border-2 transition-all ${
+                    selectedImg === i
+                      ? 'border-secondary shadow-[0_0_16px_rgba(240,98,146,0.4)]'
+                      : 'border-white/15 hover:border-white/30'
+                  }`}
                 >
                   <Image src={img} alt="" fill sizes="64px" className="object-cover" />
                 </button>
@@ -84,48 +107,150 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
 
         {/* Info */}
         <div>
-          <span className="badge-green text-xs mb-3 inline-block">{product.category}</span>
-          <h1 className="font-display font-800 text-3xl text-text-primary mb-3">{product.name}</h1>
-          <StarRating rating={product.rating} size={18} showCount count={product.review_count} className="mb-4" />
+          <p className="text-[11px] uppercase tracking-[0.25em] text-secondary mb-2">{product.category}</p>
+          <h1 className="font-display font-800 text-3xl sm:text-4xl mb-3 leading-tight">{product.name}</h1>
+          <StarRating rating={product.rating} size={16} showCount count={product.review_count} className="mb-4" />
           <CountdownTimer />
 
           <div className="flex items-baseline gap-3 my-5">
-            <span className="font-display font-800 text-4xl text-text-primary">{formatPrice(product.price)}</span>
-            <span className="text-text-secondary text-xl line-through">{formatPrice(product.compare_price)}</span>
-            <span className="badge-sale">Save {formatPrice(product.compare_price - product.price)}</span>
+            <span className="font-display font-800 text-4xl text-white">{formatPrice(product.price)}</span>
+            {product.compare_price > product.price && (
+              <span className="text-text-tertiary text-xl line-through">{formatPrice(product.compare_price)}</span>
+            )}
+            {discount > 0 && (
+              <span className="badge-sale">Save {formatPrice(product.compare_price - product.price)}</span>
+            )}
           </div>
 
-          <p className="text-text-secondary leading-relaxed mb-6">{product.description}</p>
+          <p className="text-text-secondary leading-relaxed mb-6 text-sm">{product.description}</p>
 
+          {/* Benefits */}
+          <div className="flex flex-wrap gap-2 mb-7">
+            {benefits.map((b) => (
+              <span key={b} className="badge-rose text-xs flex items-center gap-1">
+                <Check size={10} /> {b}
+              </span>
+            ))}
+          </div>
+
+          {/* Step 1 */}
+          <div className="mb-5">
+            <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest mb-3">1. Choose Your Supply</p>
+            <div className="grid grid-cols-2 gap-2">
+              {OPTIONS_SUPPLY.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setSupply(opt.id)}
+                  className={`relative text-left p-4 rounded-card border transition-all ${
+                    supply === opt.id
+                      ? 'border-secondary shadow-[0_0_20px_rgba(194,24,91,0.35)]'
+                      : 'border-white/12 hover:border-white/25'
+                  }`}
+                  style={supply === opt.id ? { background: 'rgba(194,24,91,0.1)' } : { background: 'rgba(255,255,255,0.03)' }}
+                >
+                  {opt.badge && (
+                    <span className="absolute top-2 right-2 badge-sale text-[10px] px-2">{opt.badge}</span>
+                  )}
+                  <p className="font-semibold text-white text-sm">{opt.label}</p>
+                  <p className="text-text-tertiary text-xs mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="mb-5">
+            <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest mb-3">2. Choose Your Option</p>
+            <div className="grid grid-cols-2 gap-2">
+              {OPTIONS_TYPE.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => setOptType(opt.id)}
+                  className={`relative text-left p-4 rounded-card border transition-all ${
+                    optType === opt.id
+                      ? 'border-secondary shadow-[0_0_20px_rgba(194,24,91,0.35)]'
+                      : 'border-white/12 hover:border-white/25'
+                  }`}
+                  style={optType === opt.id ? { background: 'rgba(194,24,91,0.1)' } : { background: 'rgba(255,255,255,0.03)' }}
+                >
+                  {opt.badge && (
+                    <span className="absolute top-2 right-2 badge-rose text-[10px] px-2">{opt.badge}</span>
+                  )}
+                  <p className="font-semibold text-white text-sm">{opt.label}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="mb-7">
+            <p className="text-xs font-semibold text-text-secondary uppercase tracking-widest mb-3">3. Save More With Bundles</p>
+            <div className="grid grid-cols-2 gap-2">
+              {BUNDLES.map((b) => (
+                <button
+                  key={b.id}
+                  onClick={() => setBundle(bundle === b.id ? '' : b.id)}
+                  className={`relative text-left p-4 rounded-card border transition-all ${
+                    bundle === b.id
+                      ? 'border-secondary shadow-[0_0_20px_rgba(194,24,91,0.35)]'
+                      : 'border-white/12 hover:border-white/25'
+                  }`}
+                  style={bundle === b.id ? { background: 'rgba(194,24,91,0.1)' } : { background: 'rgba(255,255,255,0.03)' }}
+                >
+                  <span className="absolute top-2 right-2 badge-sale text-[10px] px-2">{b.badge}</span>
+                  <p className="font-semibold text-white text-sm">{b.label}</p>
+                  <p className="text-text-tertiary text-xs mt-0.5">{b.sub}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Qty + CTA */}
           <div className="flex items-center gap-3 mb-4">
-            <label className="text-sm font-medium text-text-secondary">Qty:</label>
-            <div className="flex items-center border border-gray-200 rounded-btn overflow-hidden">
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 hover:bg-gray-50 text-lg">−</button>
-              <span className="px-5 py-2 font-semibold border-x border-gray-200">{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 hover:bg-gray-50 text-lg">+</button>
+            <div className="flex items-center border border-white/15 rounded-btn overflow-hidden">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2.5 hover:bg-white/10 transition-colors text-lg">−</button>
+              <span className="px-5 py-2.5 font-semibold border-x border-white/15">{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2.5 hover:bg-white/10 transition-colors text-lg">+</button>
             </div>
           </div>
 
           <button
             onClick={handleAddToCart}
-            className={`w-full flex items-center justify-center gap-2 font-display font-700 text-lg py-4 rounded-btn transition-all ${added ? 'bg-green-600 text-white' : 'bg-primary hover:bg-primary-dark text-white'}`}
+            className="w-full py-4 font-display font-700 text-lg rounded-btn transition-all flex items-center justify-center gap-2"
+            style={
+              added
+                ? { background: '#0E9F6E', boxShadow: '0 0 24px rgba(14,159,110,0.4)' }
+                : { background: 'linear-gradient(135deg,#C2185B,#A01548)', boxShadow: '0 0 32px rgba(194,24,91,0.5)' }
+            }
           >
-            {added ? <><Check size={20} /> Added to Cart!</> : <><ShoppingCart size={20} /> Add to Cart</>}
+            {added ? (
+              <><Check size={20} /> Added to Cart!</>
+            ) : (
+              <>Add to Cart — {formatPrice(product.price * quantity)}</>
+            )}
           </button>
 
-          <div className="grid grid-cols-3 gap-3 mt-5">
-            {['🔒 Secure Checkout', '↩ Free Returns', '🚚 Fast Delivery'].map((b) => (
-              <div key={b} className="text-center text-xs text-text-secondary border border-gray-100 rounded-btn p-2">
-                {b}
+          {/* Trust */}
+          <div className="grid grid-cols-3 gap-2 mt-4">
+            {[
+              { icon: ShieldCheck, label: 'Secure Checkout' },
+              { icon: RotateCcw, label: '30-Day Returns' },
+              { icon: Truck, label: 'Free Shipping' },
+            ].map(({ icon: Icon, label }) => (
+              <div key={label} className="flex flex-col items-center gap-1.5 text-center border border-white/10 rounded-btn p-3">
+                <Icon size={16} className="text-secondary" />
+                <span className="text-[11px] text-text-secondary">{label}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
+      {/* Related */}
       {relatedProducts.length > 0 && (
         <div className="mt-20">
-          <h2 className="font-display font-700 text-2xl text-text-primary mb-6">You May Also Like</h2>
+          <p className="text-[11px] uppercase tracking-[0.25em] text-secondary mb-3">You May Also Like</p>
+          <h2 className="font-display font-700 text-2xl mb-6">Complete Your Ritual</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {relatedProducts.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>

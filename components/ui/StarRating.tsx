@@ -21,7 +21,7 @@ export default function StarRating({ rating, size = 16, showCount, count, classN
         />
       ))}
       {showCount && count !== undefined && (
-        <span className="text-text-secondary text-sm ml-1">({count})</span>
+        <span className="text-text-secondary text-sm ml-1.5">({count.toLocaleString()})</span>
       )}
     </div>
   );

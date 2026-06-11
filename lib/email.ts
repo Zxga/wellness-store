@@ -3,6 +3,29 @@ import { OrderItem } from '@/types';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const BASE_STYLE = `
+  font-family: 'Inter', Arial, sans-serif;
+  background: #120308;
+  margin: 0;
+  padding: 20px;
+  color: #ffffff;
+`;
+const HEADER_STYLE = `
+  background: linear-gradient(135deg, #C2185B, #A01548);
+  padding: 32px;
+  text-align: center;
+  border-radius: 16px 16px 0 0;
+`;
+const CARD_STYLE = `
+  max-width: 600px;
+  margin: 0 auto;
+  background: #1F0810;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(240,98,146,0.2);
+  box-shadow: 0 0 60px rgba(194,24,91,0.3);
+`;
+
 export async function sendOrderConfirmation(
   customerEmail: string,
   customerName: string,
@@ -10,56 +33,50 @@ export async function sendOrderConfirmation(
   items: OrderItem[],
   total: number
 ) {
-  const itemsHtml = items
-    .map(
-      (item) => `
+  const itemsHtml = items.map((item) => `
     <tr>
-      <td style="padding:12px;border-bottom:1px solid #f0f0f0;">
+      <td style="padding:12px;border-bottom:1px solid rgba(255,255,255,0.08);color:#fff;">
         <strong>${item.name}</strong><br/>
-        <span style="color:#6B7280;">Qty: ${item.quantity}</span>
+        <span style="color:rgba(255,255,255,0.5);font-size:13px;">Qty: ${item.quantity}</span>
       </td>
-      <td style="padding:12px;border-bottom:1px solid #f0f0f0;text-align:right;">
+      <td style="padding:12px;border-bottom:1px solid rgba(255,255,255,0.08);text-align:right;color:#F06292;font-weight:700;">
         $${(item.price * item.quantity).toFixed(2)}
       </td>
     </tr>
-  `
-    )
-    .join('');
+  `).join('');
 
   await resend.emails.send({
-    from: 'WellnessHub <orders@wellnesshub.com>',
+    from: 'RAYLUNE <orders@raylune.com>',
     to: customerEmail,
-    subject: 'Your WellnessHub order is confirmed! 🌿',
+    subject: 'Your RAYLUNE order is confirmed ✨',
     html: `
       <!DOCTYPE html>
       <html>
-        <body style="font-family:Inter,sans-serif;background:#FAFAF9;margin:0;padding:20px;">
-          <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-            <div style="background:#16A34A;padding:32px;text-align:center;">
-              <h1 style="color:#fff;margin:0;font-size:28px;">🌿 WellnessHub</h1>
+        <body style="${BASE_STYLE}">
+          <div style="${CARD_STYLE}">
+            <div style="${HEADER_STYLE}">
+              <h1 style="color:#fff;margin:0;font-size:28px;letter-spacing:0.15em;font-weight:800;">✦ RAYLUNE</h1>
+              <p style="color:rgba(255,255,255,0.75);margin:6px 0 0;font-size:13px;">Light. Recovery. Glow.</p>
             </div>
             <div style="padding:32px;">
-              <h2 style="color:#111827;margin-top:0;">Order Confirmed! ✅</h2>
-              <p style="color:#6B7280;">Hi ${customerName}, thank you for your order. We're getting it ready!</p>
-              <p style="color:#6B7280;"><strong>Order #${orderId.slice(0, 8).toUpperCase()}</strong></p>
-
-              <table style="width:100%;border-collapse:collapse;margin:24px 0;">
+              <h2 style="color:#F06292;margin-top:0;">Order Confirmed ✨</h2>
+              <p style="color:rgba(255,255,255,0.65);">Hi ${customerName}, your glow ritual is on its way!</p>
+              <p style="color:rgba(255,255,255,0.5);font-size:13px;">Order #${orderId.slice(0, 8).toUpperCase()}</p>
+              <table style="width:100%;border-collapse:collapse;margin:20px 0;">
                 ${itemsHtml}
                 <tr>
-                  <td style="padding:12px;font-weight:700;">Total</td>
-                  <td style="padding:12px;font-weight:700;text-align:right;color:#16A34A;">$${total.toFixed(2)}</td>
+                  <td style="padding:14px;font-weight:700;color:#fff;">Total</td>
+                  <td style="padding:14px;font-weight:800;text-align:right;color:#F06292;font-size:18px;">$${total.toFixed(2)}</td>
                 </tr>
               </table>
-
-              <div style="background:#F0FDF4;border-radius:8px;padding:16px;margin:24px 0;">
-                <p style="margin:0;color:#16A34A;font-weight:600;">📦 Estimated Delivery: 7-14 business days</p>
-                <p style="margin:4px 0 0;color:#6B7280;font-size:14px;">Express shipping: 3-5 business days</p>
+              <div style="background:rgba(194,24,91,0.1);border:1px solid rgba(240,98,146,0.25);border-radius:10px;padding:16px;margin:20px 0;">
+                <p style="margin:0;color:#F06292;font-weight:600;">📦 Estimated Delivery: 7–14 business days</p>
+                <p style="margin:6px 0 0;color:rgba(255,255,255,0.5);font-size:13px;">Express shipping: 3–5 business days</p>
               </div>
-
-              <p style="color:#6B7280;">Need help? Reply to this email or visit our <a href="${process.env.NEXT_PUBLIC_URL}/contact" style="color:#16A34A;">support page</a>.</p>
+              <p style="color:rgba(255,255,255,0.5);font-size:13px;">Questions? Reply to this email or visit <a href="${process.env.NEXT_PUBLIC_URL}/contact" style="color:#F06292;">support</a>.</p>
             </div>
-            <div style="background:#f9f9f9;padding:16px;text-align:center;">
-              <p style="color:#6B7280;font-size:12px;margin:0;">© 2024 WellnessHub. All rights reserved.</p>
+            <div style="padding:16px;text-align:center;border-top:1px solid rgba(255,255,255,0.08);">
+              <p style="color:rgba(255,255,255,0.3);font-size:11px;margin:0;">© 2026 RAYLUNE. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -70,29 +87,32 @@ export async function sendOrderConfirmation(
 
 export async function sendWelcomeEmail(email: string, discountCode: string) {
   await resend.emails.send({
-    from: 'WellnessHub <hello@wellnesshub.com>',
+    from: 'RAYLUNE <hello@raylune.com>',
     to: email,
-    subject: "Here's your 10% off code 🎁",
+    subject: "Here's your 15% off glow ritual code ✨",
     html: `
       <!DOCTYPE html>
       <html>
-        <body style="font-family:Inter,sans-serif;background:#FAFAF9;margin:0;padding:20px;">
-          <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-            <div style="background:#16A34A;padding:32px;text-align:center;">
-              <h1 style="color:#fff;margin:0;font-size:28px;">🌿 WellnessHub</h1>
+        <body style="${BASE_STYLE}">
+          <div style="${CARD_STYLE}">
+            <div style="${HEADER_STYLE}">
+              <h1 style="color:#fff;margin:0;font-size:28px;letter-spacing:0.15em;font-weight:800;">✦ RAYLUNE</h1>
             </div>
             <div style="padding:32px;text-align:center;">
-              <h2 style="color:#111827;">Welcome to Your Wellness Journey! 🎉</h2>
-              <p style="color:#6B7280;">Here's your exclusive discount code:</p>
-              <div style="background:#F0FDF4;border:2px dashed #16A34A;border-radius:8px;padding:20px;margin:24px 0;">
-                <p style="font-size:32px;font-weight:700;color:#16A34A;margin:0;letter-spacing:4px;">${discountCode}</p>
-                <p style="color:#6B7280;margin:8px 0 0;font-size:14px;">10% off your first order</p>
+              <h2 style="color:#fff;margin-top:0;">Welcome to Your Glow Ritual 🌟</h2>
+              <p style="color:rgba(255,255,255,0.65);">Here's your exclusive welcome discount:</p>
+              <div style="background:rgba(194,24,91,0.12);border:2px dashed rgba(240,98,146,0.4);border-radius:12px;padding:24px;margin:24px 0;">
+                <p style="font-size:36px;font-weight:800;color:#F06292;margin:0;letter-spacing:6px;">${discountCode}</p>
+                <p style="color:rgba(255,255,255,0.5);margin:8px 0 0;font-size:13px;">15% off your first order</p>
               </div>
-              <a href="${process.env.NEXT_PUBLIC_URL}/shop" style="display:inline-block;background:#16A34A;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;">Shop Now →</a>
-              <p style="color:#6B7280;font-size:14px;margin-top:24px;">Discover our wellness collection — from infrared sauna blankets to red light therapy wands, everything you need to feel your best.</p>
+              <a href="${process.env.NEXT_PUBLIC_URL}/shop"
+                style="display:inline-block;background:linear-gradient(135deg,#C2185B,#A01548);color:#fff;padding:14px 36px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;box-shadow:0 0 24px rgba(194,24,91,0.45);">
+                Shop the Collection →
+              </a>
+              <p style="color:rgba(255,255,255,0.4);font-size:13px;margin-top:20px;">Red light therapy · Recovery · Sleep rituals</p>
             </div>
-            <div style="background:#f9f9f9;padding:16px;text-align:center;">
-              <p style="color:#6B7280;font-size:12px;margin:0;">© 2024 WellnessHub. All rights reserved.</p>
+            <div style="padding:16px;text-align:center;border-top:1px solid rgba(255,255,255,0.08);">
+              <p style="color:rgba(255,255,255,0.3);font-size:11px;margin:0;">© 2026 RAYLUNE. All rights reserved.</p>
             </div>
           </div>
         </body>
@@ -101,17 +121,13 @@ export async function sendWelcomeEmail(email: string, discountCode: string) {
   });
 }
 
-export async function sendContactEmail(
-  name: string,
-  email: string,
-  message: string
-) {
+export async function sendContactEmail(name: string, email: string, message: string) {
   await resend.emails.send({
-    from: 'WellnessHub Contact <contact@wellnesshub.com>',
+    from: 'RAYLUNE Contact <contact@raylune.com>',
     to: process.env.ADMIN_EMAIL!,
-    subject: `New contact message from ${name}`,
+    subject: `New RAYLUNE contact from ${name}`,
     html: `
-      <h2>New Contact Form Submission</h2>
+      <h2>New Contact Submission</h2>
       <p><strong>Name:</strong> ${name}</p>
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Message:</strong></p>

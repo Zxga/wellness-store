@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { FALLBACK_PRODUCTS } from '@/lib/fallback';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://wellnesshub.com';
+  const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://raylune.com';
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },

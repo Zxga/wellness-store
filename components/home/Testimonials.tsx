@@ -1,75 +1,51 @@
 import { Star } from 'lucide-react';
 
-const testimonials = [
-  {
-    name: 'Sarah M.',
-    location: 'New York, USA',
-    rating: 5,
-    avatar: 'SM',
-    text: "The sauna blanket is a game-changer! I use it every evening after work and my stress levels have dropped dramatically. My back pain is almost completely gone after 3 weeks. Worth every penny!",
-    product: 'ProRelax Sauna Blanket',
-  },
-  {
-    name: 'James T.',
-    location: 'London, UK',
-    rating: 5,
-    avatar: 'JT',
-    text: "I've tried many massage guns before but the NeckEase Pro is on another level. The whisper-quiet motor is incredible — I use it during calls! Delivery was super fast and packaging was premium.",
-    product: 'NeckEase Massage Gun Pro',
-  },
-  {
-    name: 'Emily R.',
-    location: 'Toronto, Canada',
-    rating: 5,
-    avatar: 'ER',
-    text: "My skin hasn't looked this good in years! The red light wand has noticeably reduced my fine lines and I get compliments constantly. I recommended it to my whole group of friends!",
-    product: 'GlowRevive Red Light Face Wand',
-  },
+const reviews = [
+  { name: 'Sarah M.', initials: 'SM', text: 'My skin has never looked better! The glow after two weeks is unreal.', tag: 'LUX-01' },
+  { name: 'Jessica L.', initials: 'JL', text: 'Cancelled my facialist. 10 minutes a night and I look brighter, plumper, rested.', tag: 'LUX-01' },
+  { name: 'Amara K.', initials: 'AK', text: 'Feels genuinely luxury — the packaging, the glow, the results. Obsessed.', tag: 'LUX-01' },
+  { name: 'Priya R.', initials: 'PR', text: 'The FROST-01 ice bath is my favorite morning ritual. Puffiness gone instantly.', tag: 'FROST-01' },
+  { name: 'Maya T.', initials: 'MT', text: 'PULSE-01 lives in my gym bag. Whisper quiet, seriously powerful.', tag: 'PULSE-01' },
+  { name: 'Chloe B.', initials: 'CB', text: 'DREAM-01 mask = the deepest sleep of my life. The pressure is so calming.', tag: 'DREAM-01' },
+  { name: 'Olivia R.', initials: 'OR', text: 'Dermatologist recommended the red light and I finally caved. No regrets at all.', tag: 'LUX-01' },
+  { name: 'Hannah W.', initials: 'HW', text: 'The whole RAYLUNE ritual feels like a spa I keep in my bathroom. Worth it.', tag: 'Ritual' },
+  { name: 'Sofia D.', initials: 'SD', text: 'Bought as a gift, ended up buying two more for myself. Everyone is obsessed.', tag: 'LUX-01' },
 ];
 
 export default function Testimonials() {
   return (
-    <section className="py-20 bg-gradient-to-b from-green-50 to-white">
+    <section className="py-20 border-t border-white/8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <h2 className="font-display font-800 text-3xl sm:text-4xl text-text-primary mb-4">
-            Real Results, Real People
-          </h2>
-          <p className="text-text-secondary text-lg max-w-2xl mx-auto">
-            Join thousands of customers who've transformed their wellness routines.
-          </p>
+          <p className="text-secondary text-xs uppercase tracking-[0.25em] mb-3">Loved By Thousands</p>
+          <h2 className="font-display font-800 text-3xl sm:text-4xl mb-4">Real Glow, Real People</h2>
+          <div className="inline-flex items-center gap-2 text-text-secondary text-sm">
+            <span className="flex">
+              {[...Array(5)].map((_, i) => <Star key={i} size={15} className="star-filled" />)}
+            </span>
+            <strong className="text-white">4.9/5</strong> from <strong className="text-white">9,600+</strong> verified reviews
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((t) => (
-            <div key={t.name} className="card p-6">
-              {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(t.rating)].map((_, i) => (
-                  <Star key={i} size={16} className="star-filled" />
-                ))}
+        <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:balance]">
+          {reviews.map((r) => (
+            <div key={r.name} className="card p-6 mb-6 break-inside-avoid">
+              <div className="flex gap-1 mb-3">
+                {[...Array(5)].map((_, i) => <Star key={i} size={14} className="star-filled" />)}
               </div>
-
-              <p className="text-text-primary leading-relaxed mb-6 text-sm">"{t.text}"</p>
-
-              <div className="flex items-center gap-3 border-t border-gray-50 pt-4">
-                <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-display font-700 text-sm shrink-0">
-                  {t.avatar}
+              <p className="text-white/90 leading-relaxed mb-5 text-sm">“{r.text}”</p>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-full bg-primary/20 border border-[rgba(240,98,146,0.3)] text-accent flex items-center justify-center font-display font-700 text-xs shrink-0">
+                  {r.initials}
                 </div>
                 <div>
-                  <p className="font-semibold text-text-primary text-sm">{t.name}</p>
-                  <p className="text-text-secondary text-xs">{t.location}</p>
+                  <p className="text-white text-sm font-semibold">{r.name}</p>
+                  <p className="text-text-tertiary text-xs">Verified Buyer</p>
                 </div>
-                <span className="ml-auto badge-green text-xs">{t.product.split(' ')[0]}</span>
+                <span className="ml-auto badge-rose">{r.tag}</span>
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="text-center mt-10">
-          <div className="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-pill px-5 py-2.5 text-sm text-text-secondary shadow-card">
-            ⭐ <strong className="text-text-primary">4.8/5</strong> from over <strong className="text-text-primary">1,200+ verified reviews</strong>
-          </div>
         </div>
       </div>
     </section>

@@ -3,79 +3,57 @@ import { slugify, getProductImages } from './utils';
 
 const products = [
   {
-    name: 'ProRelax Sauna Blanket',
-    price: 79.99,
-    compare_price: 119.99,
-    category: 'Heat Therapy',
-    description: 'Experience spa-level heat therapy at home. Our infrared sauna blanket promotes deep muscle relaxation, detoxification, and stress relief in just 30 minutes.',
-    rating: 4.8,
-    review_count: 247,
-    stock: 50,
-    is_featured: true,
-  },
-  {
-    name: 'NeckEase Massage Gun Pro',
-    price: 54.99,
-    compare_price: 89.99,
-    category: 'Massage',
-    description: '6 adjustable speed settings, whisper-quiet motor. Targets neck, shoulders, and back tension with precision percussive therapy.',
-    rating: 4.7,
-    review_count: 183,
-    stock: 75,
-    is_featured: true,
-  },
-  {
-    name: 'GlowRevive Red Light Face Wand',
-    price: 44.99,
-    compare_price: 69.99,
-    category: 'Skincare',
-    description: 'Clinical-grade 630nm + 850nm wavelengths. Reduces fine lines, boosts collagen production, and accelerates skin recovery in 10 minutes daily.',
+    name: 'LUX-01 Red Light Face Mask',
+    price: 89.99,
+    compare_price: 149.99,
+    category: 'Light Therapy',
+    description: 'Clinical-grade red light therapy at home. Our LUX-01 mask uses 630nm + 850nm wavelengths to boost collagen production, reduce fine lines, and restore your natural glow in just 10 minutes a day. Non-invasive, FDA-cleared, and dermatologist-approved.',
     rating: 4.9,
-    review_count: 312,
-    stock: 100,
+    review_count: 4728,
+    stock: 80,
     is_featured: true,
   },
   {
-    name: 'DeepKnead Shiatsu Neck Massager',
-    price: 39.99,
-    compare_price: 59.99,
-    category: 'Massage',
-    description: '3D rotating massage nodes with heat function. Mimics professional shiatsu massage for instant tension relief at home or in the car.',
-    rating: 4.6,
-    review_count: 156,
-    stock: 60,
-    is_featured: false,
-  },
-  {
-    name: 'IcePulse Facial Roller Set',
-    price: 24.99,
-    compare_price: 39.99,
-    category: 'Skincare',
-    description: 'Dual-ended rose quartz roller + gua sha stone. Reduces puffiness, boosts circulation, and enhances product absorption in your morning routine.',
-    rating: 4.5,
-    review_count: 428,
+    name: 'FROST-01 Facial Ice Bath Bowl',
+    price: 34.99,
+    compare_price: 54.99,
+    category: 'Recovery',
+    description: 'Spa-quality cryotherapy at home. Reduce puffiness, tighten pores, and energize your skin with our BPA-free facial ice bath. The viral self-care ritual loved by millions — perfect for morning routines or post-workout recovery.',
+    rating: 4.7,
+    review_count: 1203,
     stock: 120,
     is_featured: false,
   },
   {
-    name: 'FlexWave EMS Muscle Stimulator',
-    price: 49.99,
-    compare_price: 79.99,
+    name: 'PULSE-01 Mini Massage Gun',
+    price: 54.99,
+    compare_price: 89.99,
     category: 'Recovery',
-    description: '16 intensity levels, 6 massage modes. FDA-cleared EMS technology for muscle recovery, pain relief, and passive workout enhancement.',
-    rating: 4.7,
-    review_count: 94,
-    stock: 45,
+    description: 'Professional percussive therapy in your pocket. 6 speed settings and a whisper-quiet motor target muscle tension, speed recovery, and melt away stress. Compact enough for your bag, powerful enough for deep relief.',
+    rating: 4.8,
+    review_count: 2891,
+    stock: 95,
+    is_featured: false,
+  },
+  {
+    name: 'DREAM-01 Weighted Sleep Mask',
+    price: 29.99,
+    compare_price: 44.99,
+    category: 'Sleep & Relax',
+    description: 'Drift into deeper sleep. Our weighted sleep mask applies gentle, calming pressure to relax your mind, block out light completely, and help you fall asleep faster. The perfect end to your recovery ritual.',
+    rating: 4.6,
+    review_count: 856,
+    stock: 140,
     is_featured: false,
   },
 ];
 
 const reviews = [
-  { author_name: 'Sarah M.', rating: 5, body: 'Absolutely love this! My back feels amazing after just one session.' },
-  { author_name: 'James T.', rating: 5, body: 'Best purchase I made this year. Ships fast and works perfectly.' },
-  { author_name: 'Emily R.', rating: 4, body: 'Great quality for the price. Noticed results within a week.' },
-  { author_name: 'Michael K.', rating: 5, body: 'Worth every penny. My whole family uses it now!' },
-  { author_name: 'Lisa P.', rating: 4, body: 'Super easy to use and feels very professional quality.' },
+  { author_name: 'Sarah M.', rating: 5, body: 'My skin has never looked better! The glow is real and the quality is premium.' },
+  { author_name: 'Jessica L.', rating: 5, body: 'Worth every penny. 10 minutes a day and my complexion is brighter than ever.' },
+  { author_name: 'Amara K.', rating: 5, body: 'Beautiful packaging, feels genuinely premium, and the results speak for themselves.' },
+  { author_name: 'Maya T.', rating: 4, body: 'Took a couple weeks to notice but now I am hooked. Part of my nightly ritual.' },
+  { author_name: 'Olivia R.', rating: 5, body: 'Dermatologist recommended and I can see why. Gentle, easy, and effective.' },
 ];
 
 export async function seedDatabase() {
@@ -87,7 +65,7 @@ export async function seedDatabase() {
 
     const { data, error } = await client
       .from('products')
-      .upsert({ ...product, slug, images }, { onConflict: 'slug' })
+      .upsert({ ...product, slug, images } as any, { onConflict: 'slug' })
       .select('id')
       .single();
 
@@ -96,13 +74,11 @@ export async function seedDatabase() {
       continue;
     }
 
+    const productId = (data as { id: string }).id;
     for (const review of reviews.slice(0, 3)) {
-      await client.from('reviews').insert({
-        product_id: data.id,
-        ...review,
-      });
+      await client.from('reviews').insert({ product_id: productId, ...review } as any);
     }
   }
 
-  console.log('Database seeded successfully!');
+  console.log('RAYLUNE database seeded successfully!');
 }

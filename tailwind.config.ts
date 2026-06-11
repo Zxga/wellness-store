@@ -9,33 +9,29 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#16A34A',
-        'primary-dark': '#15803D',
-        secondary: '#F59E0B',
-        background: '#FAFAF9',
-        surface: '#FFFFFF',
-        'text-primary': '#111827',
-        'text-secondary': '#6B7280',
-        danger: '#DC2626',
+        background: '#120308',
+        surface: '#1F0810',
+        elevated: '#2A0A14',
+        primary: '#C2185B',
+        'primary-dark': '#A01548',
+        secondary: '#F06292',
+        accent: '#F8BBD0',
+        'text-primary': '#FFFFFF',
+        'text-secondary': 'rgba(255,255,255,0.6)',
+        danger: '#FF4081',
       },
       fontFamily: {
         display: ['Plus Jakarta Sans', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
       },
       borderRadius: {
-        card: '12px',
-        btn: '8px',
+        card: '16px',
+        btn: '10px',
         pill: '999px',
-      },
-      boxShadow: {
-        card: '0 2px 8px rgba(0,0,0,0.06)',
-        'card-hover': '0 8px 24px rgba(0,0,0,0.12)',
       },
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
+  plugins: [],
 };
 
 export default config;

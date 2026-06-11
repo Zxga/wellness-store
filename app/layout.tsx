@@ -6,24 +6,25 @@ import CartDrawer from '@/components/cart/CartDrawer';
 import EmailPopup from '@/components/home/EmailPopup';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_URL || 'https://raylune.com'),
   title: {
-    default: 'WellnessHub — Premium Wellness Gadgets',
-    template: '%s | WellnessHub',
+    default: 'RAYLUNE — Light. Recovery. Glow.',
+    template: '%s | RAYLUNE',
   },
   description:
-    'Shop premium wellness gadgets: infrared sauna blankets, massage guns, red light therapy devices, and more. Free shipping available.',
-  keywords: ['wellness', 'sauna blanket', 'massage gun', 'red light therapy', 'health gadgets'],
+    'RAYLUNE — premium red light therapy & recovery rituals for home. Clinical-grade LED masks, cryo tools, and recovery devices. Glow starts with light.',
+  keywords: ['red light therapy', 'led face mask', 'recovery', 'cryotherapy', 'sleep mask', 'wellness', 'RAYLUNE'],
   openGraph: {
     type: 'website',
-    siteName: 'WellnessHub',
-    title: 'WellnessHub — Premium Wellness Gadgets',
-    description: 'Elevate your wellness routine with premium at-home therapy devices.',
+    siteName: 'RAYLUNE',
+    title: 'RAYLUNE — Light. Recovery. Glow.',
+    description: 'Premium red light therapy & recovery rituals for home. Glow starts with light.',
     images: ['/og-image.jpg'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'WellnessHub — Premium Wellness Gadgets',
-    description: 'Elevate your wellness routine with premium at-home therapy devices.',
+    title: 'RAYLUNE — Light. Recovery. Glow.',
+    description: 'Premium red light therapy & recovery rituals for home.',
   },
   robots: { index: true, follow: true },
 };
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col bg-background">
+      <body className="min-h-screen flex flex-col bg-background text-text-primary">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />

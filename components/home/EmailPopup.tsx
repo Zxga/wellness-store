@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { X, Leaf } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 
 export default function EmailPopup() {
   const [show, setShow] = useState(false);
@@ -9,7 +9,7 @@ export default function EmailPopup() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem('wh_popup_dismissed');
+    const dismissed = localStorage.getItem('raylune_popup_dismissed');
     if (dismissed) return;
     const timer = setTimeout(() => setShow(true), 8000);
     return () => clearTimeout(timer);
@@ -17,7 +17,7 @@ export default function EmailPopup() {
 
   function dismiss() {
     setShow(false);
-    localStorage.setItem('wh_popup_dismissed', '1');
+    localStorage.setItem('raylune_popup_dismissed', '1');
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -33,7 +33,7 @@ export default function EmailPopup() {
       setSubmitted(true);
       setTimeout(dismiss, 3000);
     } catch {
-      // silent fail
+      // silent
     } finally {
       setLoading(false);
     }
@@ -42,58 +42,50 @@ export default function EmailPopup() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white rounded-card shadow-card-hover max-w-md w-full p-8 relative animate-fade-in">
-        <button
-          onClick={dismiss}
-          className="absolute top-4 right-4 text-text-secondary hover:text-text-primary transition-colors"
-          aria-label="Close"
-        >
-          <X size={20} />
-        </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <div className="relative max-w-md w-full rounded-card overflow-hidden border border-[rgba(240,98,146,0.25)] shadow-[0_0_80px_rgba(194,24,91,0.35)]">
+        {/* Glow bg */}
+        <div className="absolute inset-0 bg-[#1F0810]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] glow-hero opacity-70 pointer-events-none" />
 
-        <div className="text-center">
-          <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Leaf size={28} className="text-primary" />
+        <div className="relative p-8 text-center">
+          <button
+            onClick={dismiss}
+            className="absolute top-4 right-4 text-text-secondary hover:text-white transition-colors"
+          >
+            <X size={18} />
+          </button>
+
+          <div className="w-14 h-14 rounded-full bg-primary/20 border border-[rgba(240,98,146,0.3)] flex items-center justify-center mx-auto mb-5">
+            <Sparkles size={26} className="text-secondary" />
           </div>
 
           {submitted ? (
             <>
-              <h3 className="font-display font-800 text-2xl text-text-primary mb-2">You're in! 🎉</h3>
-              <p className="text-text-secondary">Check your email for your 10% off code. Happy shopping!</p>
+              <h3 className="font-display font-800 text-2xl mb-2">You&apos;re glowing! ✨</h3>
+              <p className="text-text-secondary">Check your inbox for your 15% off code. Your ritual awaits.</p>
             </>
           ) : (
             <>
-              <h3 className="font-display font-800 text-2xl text-text-primary mb-2">
-                Get 10% Off Your First Order
-              </h3>
-              <p className="text-text-secondary mb-6">
-                Join 12,000+ wellness enthusiasts. Get exclusive deals, wellness tips, and your discount code.
+              <h3 className="font-display font-800 text-2xl mb-2">Get 15% Off Your Glow Ritual</h3>
+              <p className="text-text-secondary mb-6 text-sm leading-relaxed">
+                Join 18,000+ who&apos;ve made red light therapy part of their routine. Get exclusive drops and your welcome discount.
               </p>
-
               <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
+                  placeholder="your@email.com"
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-btn focus:outline-none focus:border-primary text-sm"
+                  className="input-dark w-full px-4 py-3 text-sm"
                 />
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-primary text-base py-3 disabled:opacity-60"
-                >
-                  {loading ? 'Sending...' : 'Claim My 10% Off →'}
+                <button type="submit" disabled={loading} className="btn-primary py-3 disabled:opacity-60">
+                  {loading ? 'Sending...' : 'Claim My 15% Off →'}
                 </button>
               </form>
-
-              <button
-                onClick={dismiss}
-                className="mt-4 text-xs text-text-secondary hover:text-text-primary transition-colors"
-              >
-                No thanks, I'll pay full price
+              <button onClick={dismiss} className="mt-4 text-xs text-text-tertiary hover:text-text-secondary transition-colors">
+                No thanks, I&apos;ll skip the glow
               </button>
             </>
           )}
