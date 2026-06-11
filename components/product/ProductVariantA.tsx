@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Image from 'next/image';
 import { Check, ShieldCheck, RotateCcw, Truck } from 'lucide-react';
 import { Product, Review } from '@/types';
@@ -17,16 +17,16 @@ interface Props {
 }
 
 const OPTIONS_SUPPLY = [
-  { id: '1x', label: '1 Mask', desc: 'Perfect starter' },
-  { id: '2x', label: 'Mask + Serum Bundle', desc: 'Most popular', badge: 'SAVE 15%' },
+  { id: '1x',  label: '1 Mask',              desc: 'Perfect starter',  price: 89.99  },
+  { id: '2x',  label: 'Mask + Serum Bundle', desc: 'Most popular',     price: 119.99, badge: 'SAVE 15%' },
 ];
 const OPTIONS_TYPE = [
-  { id: 'one-time', label: 'One-Time Purchase' },
-  { id: '2pack', label: '2-Pack Gift Set', badge: 'GIFT READY' },
+  { id: 'one-time', label: 'One-Time Purchase', price: null },
+  { id: '2pack',    label: '2-Pack Gift Set',   price: 159.99, badge: 'GIFT READY' },
 ];
 const BUNDLES = [
-  { id: 'starter', label: 'Glow Starter', sub: 'LUX-01 + FROST-01', badge: 'SAVE $15' },
-  { id: 'ritual', label: 'Full Ritual', sub: 'LUX-01 + FROST-01 + PULSE-01', badge: 'BEST VALUE' },
+  { id: 'starter', label: 'Glow Starter', sub: 'LUX-01 + FROST-01',              price: 109.99, badge: 'SAVE $15'   },
+  { id: 'ritual',  label: 'Full Ritual',  sub: 'LUX-01 + FROST-01 + PULSE-01',   price: 149.99, badge: 'BEST VALUE' },
 ];
 
 export default function ProductVariantA({ product, reviews, relatedProducts }: Props) {
@@ -37,9 +37,35 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
   const [bundle, setBundle] = useState('');
   const [added, setAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [priceKey, setPriceKey] = useState(0);
   const discount = getDiscountPercent(product.price, product.compare_price);
   const benefits = getProductBenefits(product.slug);
   const images = product.images?.length ? product.images : [];
+
+  // Derive price from selected options — bundle > 2-pack > supply > default
+  const displayPrice = useMemo(() => {
+    if (bundle) return BUNDLES.find((b) => b.id === bundle)!.price;
+    if (optType === '2pack') return OPTIONS_TYPE[1].price!;
+    if (supply === '2x') return OPTIONS_SUPPLY[1].price;
+    return OPTIONS_SUPPLY[0].price;
+  }, [bundle, optType, supply]);
+
+  // Trigger pop animation whenever price changes
+  const prevPrice = useRef(displayPrice);
+  useEffect(() => {
+    if (displayPrice !== prevPrice.current) {
+      prevPrice.current = displayPrice;
+      setPriceKey((k) => k + 1);
+    }
+  }, [displayPrice]);
+
+  const savingsLabel = useMemo(() => {
+    if (bundle === 'ritual') return 'Best Value';
+    if (bundle === 'starter') return 'Save $15';
+    if (optType === '2pack') return 'Gift Ready';
+    if (supply === '2x') return 'Save 15%';
+    return null;
+  }, [bundle, optType, supply]);
 
   useEffect(() => {
     const sessionId = getOrCreateSessionId();
@@ -113,12 +139,17 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
           <CountdownTimer />
 
           <div className="flex items-baseline gap-3 my-5">
-            <span className="font-display font-800 text-4xl text-white">{formatPrice(product.price)}</span>
-            {product.compare_price > product.price && (
+            <span
+              key={priceKey}
+              className="font-display font-800 text-4xl text-white animate-price-pop"
+            >
+              {formatPrice(displayPrice)}
+            </span>
+            {displayPrice < product.compare_price && (
               <span className="text-text-tertiary text-xl line-through">{formatPrice(product.compare_price)}</span>
             )}
-            {discount > 0 && (
-              <span className="badge-sale">Save {formatPrice(product.compare_price - product.price)}</span>
+            {savingsLabel && (
+              <span className="badge-sale">{savingsLabel}</span>
             )}
           </div>
 
@@ -140,19 +171,20 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
               {OPTIONS_SUPPLY.map((opt) => (
                 <button
                   key={opt.id}
-                  onClick={() => setSupply(opt.id)}
+                  onClick={() => { setSupply(opt.id); setBundle(''); }}
                   className={`relative text-left p-4 rounded-card border transition-all ${
-                    supply === opt.id
+                    supply === opt.id && !bundle
                       ? 'border-secondary shadow-[0_0_20px_rgba(194,24,91,0.35)]'
                       : 'border-white/12 hover:border-white/25'
                   }`}
-                  style={supply === opt.id ? { background: 'rgba(194,24,91,0.1)' } : { background: 'rgba(255,255,255,0.03)' }}
+                  style={supply === opt.id && !bundle ? { background: 'rgba(194,24,91,0.1)' } : { background: 'rgba(255,255,255,0.03)' }}
                 >
                   {opt.badge && (
                     <span className="absolute top-2 right-2 badge-sale text-[10px] px-2">{opt.badge}</span>
                   )}
                   <p className="font-semibold text-white text-sm">{opt.label}</p>
                   <p className="text-text-tertiary text-xs mt-0.5">{opt.desc}</p>
+                  <p className="text-secondary font-semibold text-sm mt-1">{formatPrice(opt.price)}</p>
                 </button>
               ))}
             </div>
@@ -165,18 +197,21 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
               {OPTIONS_TYPE.map((opt) => (
                 <button
                   key={opt.id}
-                  onClick={() => setOptType(opt.id)}
+                  onClick={() => { setOptType(opt.id); setBundle(''); }}
                   className={`relative text-left p-4 rounded-card border transition-all ${
-                    optType === opt.id
+                    optType === opt.id && !bundle
                       ? 'border-secondary shadow-[0_0_20px_rgba(194,24,91,0.35)]'
                       : 'border-white/12 hover:border-white/25'
                   }`}
-                  style={optType === opt.id ? { background: 'rgba(194,24,91,0.1)' } : { background: 'rgba(255,255,255,0.03)' }}
+                  style={optType === opt.id && !bundle ? { background: 'rgba(194,24,91,0.1)' } : { background: 'rgba(255,255,255,0.03)' }}
                 >
                   {opt.badge && (
                     <span className="absolute top-2 right-2 badge-rose text-[10px] px-2">{opt.badge}</span>
                   )}
                   <p className="font-semibold text-white text-sm">{opt.label}</p>
+                  {opt.price && (
+                    <p className="text-secondary font-semibold text-sm mt-1">{formatPrice(opt.price)}</p>
+                  )}
                 </button>
               ))}
             </div>
@@ -200,6 +235,7 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
                   <span className="absolute top-2 right-2 badge-sale text-[10px] px-2">{b.badge}</span>
                   <p className="font-semibold text-white text-sm">{b.label}</p>
                   <p className="text-text-tertiary text-xs mt-0.5">{b.sub}</p>
+                  <p className="text-secondary font-semibold text-sm mt-1">{formatPrice(b.price)}</p>
                 </button>
               ))}
             </div>
@@ -226,7 +262,7 @@ export default function ProductVariantA({ product, reviews, relatedProducts }: P
             {added ? (
               <><Check size={20} /> Added to Cart!</>
             ) : (
-              <>Add to Cart — {formatPrice(product.price * quantity)}</>
+              <>Add to Cart — {formatPrice(displayPrice * quantity)}</>
             )}
           </button>
 
