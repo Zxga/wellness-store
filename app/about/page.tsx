@@ -47,10 +47,10 @@ export default function AboutPage() {
           <div className="relative h-80 rounded-card overflow-hidden border border-white/10"
             style={{ boxShadow: '0 0 60px rgba(194,24,91,0.25)' }}>
             <Image
-              src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80"
-              alt="RAYLUNE product"
+              src="https://ocjyvjdcmukhxyglzsvs.supabase.co/storage/v1/object/public/products/lucid-origin_a_cinematic_photo_of_woman_wearing_white_LED_therapy_face_mask_eyes_closed_relax-0.jpg"
+              alt="Woman wearing LUX-01 Red Light Face Mask"
               fill
-              className="object-cover"
+              className="object-cover object-top"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#120308]/60 to-transparent" />
           </div>
