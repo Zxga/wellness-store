@@ -45,8 +45,8 @@ export function getProductImage(images: string[], index = 0): string {
 
 const PRODUCT_IMAGES: Record<string, string[]> = {
   'lux-01-red-light-face-mask': [
-    'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80',
-    'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=900&q=80',
+    'https://ocjyvjdcmukhxyglzsvs.supabase.co/storage/v1/object/public/products/lucid-origin_a_cinematic_photo_of_woman_wearing_white_LED_therapy_face_mask_eyes_closed_relax-0.jpg',
+    'https://ocjyvjdcmukhxyglzsvs.supabase.co/storage/v1/object/public/products/gemini-2.5-flash-image_same_LED_face_mask_dark_burgundy_background_rose_red_light_glow_luxury_wellness_-0.jpg',
   ],
   'frost-01-facial-ice-bath-bowl': [
     'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=900&q=80',

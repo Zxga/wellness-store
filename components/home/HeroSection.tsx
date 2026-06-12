@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { ArrowRight, Sparkles, ShieldCheck, RotateCcw, Truck, FlaskConical } from 'lucide-react';
 import { getProductImages } from '@/lib/utils';
 
-const heroImage = getProductImages('lux-01-red-light-face-mask')[0];
+const [heroImage, heroImageAlt] = getProductImages('lux-01-red-light-face-mask');
 
 export default function HeroSection() {
   return (
@@ -54,22 +54,41 @@ export default function HeroSection() {
 
           {/* Hero product */}
           <div className="relative flex items-center justify-center">
-            <div className="absolute w-[420px] h-[420px] glow-radial animate-glow-pulse" />
-            <div className="relative w-full max-w-md aspect-square rounded-card overflow-hidden border border-white/10 shadow-[0_0_80px_rgba(194,24,91,0.35)] animate-float">
+            {/* Ambient glow behind image */}
+            <div className="absolute w-[480px] h-[480px] glow-radial animate-glow-pulse opacity-90" />
+
+            {/* Main image card */}
+            <div className="relative w-full max-w-md aspect-[3/4] rounded-card overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(194,24,91,0.45)] animate-float">
               <Image
                 src={heroImage}
-                alt="LUX-01 Red Light Face Mask"
+                alt="Woman wearing LUX-01 Red Light Face Mask"
                 fill
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
+                className="object-cover object-top"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#120308]/70 via-transparent to-transparent" />
+              {/* Rose gradient overlay at bottom */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#120308]/80 via-[#120308]/10 to-transparent" />
+              {/* Product label */}
               <div className="absolute bottom-5 left-5 right-5">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-accent mb-1">The Hero</p>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-accent mb-1">✦ The Hero Treatment</p>
                 <p className="font-display font-700 text-white text-xl">LUX-01 Red Light Mask</p>
+                <p className="text-secondary text-sm mt-0.5">630nm + 850nm · 10 min daily</p>
               </div>
             </div>
+
+            {/* Secondary floating thumbnail */}
+            {heroImageAlt && (
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-card overflow-hidden border-2 border-secondary/40 shadow-[0_0_24px_rgba(194,24,91,0.5)]">
+                <Image
+                  src={heroImageAlt}
+                  alt="LUX-01 product glow shot"
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>
