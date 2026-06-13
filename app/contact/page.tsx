@@ -42,7 +42,7 @@ export default function ContactPage() {
         <div className="grid md:grid-cols-3 gap-10">
           <div className="space-y-5">
             {[
-              { icon: Mail, label: 'Email', sub: 'hello@raylune.com' },
+              { icon: Mail, label: 'Email', sub: 'support@raylune.com' },
               { icon: MessageSquare, label: 'Live Chat', sub: 'Mon–Fri, 9am–6pm EST' },
               { icon: Clock, label: 'Response Time', sub: 'Within 24 hours' },
             ].map(({ icon: Icon, label, sub }) => (
