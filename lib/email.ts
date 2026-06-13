@@ -124,7 +124,7 @@ export async function sendWelcomeEmail(email: string, discountCode: string) {
 export async function sendContactEmail(name: string, email: string, message: string) {
   console.log('[email] sending contact email to:', process.env.ADMIN_EMAIL, '| from: contact@raylune.com');
   const result = await resend.emails.send({
-    from: 'RAYLUNE Contact <onboarding@resend.dev>',
+    from: 'RAYLUNE Contact <contact@raylune.com>',
     to: process.env.ADMIN_EMAIL!,
     subject: `New RAYLUNE contact from ${name}`,
     html: `
