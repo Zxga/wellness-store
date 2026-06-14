@@ -14,6 +14,15 @@ export const metadata: Metadata = {
   description:
     'RAYLUNE — premium red light therapy & recovery rituals for home. Clinical-grade LED masks, cryo tools, and recovery devices. Glow starts with light.',
   keywords: ['red light therapy', 'led face mask', 'recovery', 'cryotherapy', 'sleep mask', 'wellness', 'RAYLUNE'],
+  icons: {
+    icon: [
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico' },
+    ],
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    other: { rel: 'manifest', url: '/site.webmanifest' },
+  },
   openGraph: {
     type: 'website',
     siteName: 'RAYLUNE',
