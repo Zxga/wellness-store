@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Lock } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { formatPrice } from '@/lib/utils';
 import dynamic from 'next/dynamic';
@@ -15,28 +15,11 @@ const PayPalCheckoutButton = dynamic(() => import('@/components/cart/PayPalCheck
 export default function CartPage() {
   const { items, removeItem, updateQuantity, subtotal } = useCartStore();
   const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
   const total = subtotal();
   const shipping = total >= 50 ? 0 : 9.99;
-
-  async function handleCheckout() {
-    setLoading(true);
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items }),
-      });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-    } finally {
-      setLoading(false);
-    }
-  }
 
   if (items.length === 0) {
     return (
@@ -123,21 +106,6 @@ export default function CartPage() {
                 <span className="font-display font-700 text-white">Total</span>
                 <span className="font-display font-800 text-xl text-white">{formatPrice(total + shipping)}</span>
               </div>
-            </div>
-
-            <button
-              onClick={handleCheckout}
-              disabled={loading}
-              className="btn-primary w-full py-4 gap-2 disabled:opacity-60"
-            >
-              <Lock size={15} />
-              {loading ? 'Redirecting...' : 'Secure Checkout'}
-            </button>
-
-            <div className="relative my-4 flex items-center gap-3">
-              <div className="flex-1 border-t border-white/10" />
-              <span className="text-xs text-text-tertiary uppercase tracking-wider">or</span>
-              <div className="flex-1 border-t border-white/10" />
             </div>
 
             <PayPalCheckoutButton items={items} total={total + shipping} />
