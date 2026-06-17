@@ -5,6 +5,12 @@ import Link from 'next/link';
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft, Lock } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { formatPrice } from '@/lib/utils';
+import dynamic from 'next/dynamic';
+
+const PayPalCheckoutButton = dynamic(() => import('@/components/cart/PayPalCheckoutButton'), {
+  ssr: false,
+  loading: () => <div className="h-12 w-full rounded-btn bg-white/5 animate-pulse" />,
+});
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, subtotal } = useCartStore();
@@ -127,6 +133,14 @@ export default function CartPage() {
               <Lock size={15} />
               {loading ? 'Redirecting...' : 'Secure Checkout'}
             </button>
+
+            <div className="relative my-4 flex items-center gap-3">
+              <div className="flex-1 border-t border-white/10" />
+              <span className="text-xs text-text-tertiary uppercase tracking-wider">or</span>
+              <div className="flex-1 border-t border-white/10" />
+            </div>
+
+            <PayPalCheckoutButton items={items} total={total + shipping} />
 
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {['Visa', 'Mastercard', 'AmEx', 'PayPal'].map((p) => (
