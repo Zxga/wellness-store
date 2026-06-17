@@ -6,11 +6,6 @@ export const metadata = {
   description: 'We believe glow starts with light. Learn the story behind RAYLUNE.',
 };
 
-const team = [
-  { name: 'Alex Chen', role: 'Founder & CEO', initials: 'AC' },
-  { name: 'Maya Johnson', role: 'Head of Product', initials: 'MJ' },
-  { name: 'Sam Williams', role: 'Customer Experience', initials: 'SW' },
-];
 
 export default function AboutPage() {
   return (
@@ -81,19 +76,11 @@ export default function AboutPage() {
 
       {/* Team */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 border-t border-white/10">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="font-display font-700 text-3xl mb-10">The Team</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {team.map((m) => (
-              <div key={m.name} className="card p-6 text-center">
-                <div className="w-20 h-20 rounded-full bg-primary/15 border border-[rgba(240,98,146,0.3)] text-accent font-display font-800 text-2xl flex items-center justify-center mx-auto mb-4 shadow-[0_0_24px_rgba(194,24,91,0.2)]">
-                  {m.initials}
-                </div>
-                <p className="font-display font-700 text-white">{m.name}</p>
-                <p className="text-text-secondary text-sm mt-1">{m.role}</p>
-              </div>
-            ))}
-          </div>
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="font-display font-700 text-3xl mb-6">The Team</h2>
+          <p className="text-text-secondary text-lg leading-relaxed">
+            Founded by wellness enthusiasts passionate about bringing clinical-grade skincare technology to everyone.
+          </p>
         </div>
       </section>
     </div>
