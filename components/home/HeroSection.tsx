@@ -3,7 +3,9 @@ import Image from 'next/image';
 import { ArrowRight, Sparkles, ShieldCheck, RotateCcw, Truck, FlaskConical } from 'lucide-react';
 import { getProductImages } from '@/lib/utils';
 
-const [heroImage, heroImageAlt] = getProductImages('lux-01-red-light-face-mask');
+const [, heroImageAlt] = getProductImages('lux-01-red-light-face-mask');
+const heroImage =
+  'https://ocjyvjdcmukhxyglzsvs.supabase.co/storage/v1/object/public/products/gemini-2.5-flash-image_make_background_burgundy_keep_these_two_masks_white_as_they_are_with_pinkish_ros-0.jpg';
 
 export default function HeroSection() {
   return (
