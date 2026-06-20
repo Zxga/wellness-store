@@ -23,7 +23,7 @@ export default function Testimonials() {
             <span className="flex">
               {[...Array(5)].map((_, i) => <Star key={i} size={15} className="star-filled" />)}
             </span>
-            <strong className="text-white">4.9/5</strong> from <strong className="text-white">9,600+</strong> verified reviews
+            <strong className="text-white">4.9/5</strong> from <strong className="text-white">180+</strong> verified reviews
           </div>
         </div>
 
