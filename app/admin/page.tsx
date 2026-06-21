@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Lock, BarChart2, ShoppingBag, Mail, RefreshCw } from 'lucide-react';
+import { Lock, BarChart2, ShoppingBag, Mail, RefreshCw, Package } from 'lucide-react';
 import { formatPrice } from '@/lib/utils';
 
 interface ABResult {
@@ -18,8 +18,10 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [abResults, setAbResults] = useState<ABResult[]>([]);
   const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<'orders' | 'ab' | 'subscribers'>('orders');
+  const [loadError, setLoadError] = useState('');
+  const [activeTab, setActiveTab] = useState<'orders' | 'products' | 'ab' | 'subscribers'>('orders');
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -33,22 +35,21 @@ export default function AdminPage() {
 
   async function loadData() {
     setLoading(true);
+    setLoadError('');
     try {
       const res = await fetch('/api/admin/data');
-      if (res.ok) {
-        const data = await res.json();
-        setOrders(data.orders || []);
-        setAbResults(data.abResults || []);
-        setSubscribers(data.subscribers || []);
-      }
-    } catch {
-      // use mock data if API unavailable
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to load admin data');
+      setOrders(data.orders || []);
+      setAbResults(data.abResults || []);
+      setSubscribers(data.subscribers || []);
+      setProducts(data.products || []);
+    } catch (err: any) {
+      setLoadError(err.message || 'Failed to load admin data from Supabase');
       setOrders([]);
-      setAbResults([
-        { variant: 'A', views: 124, add_to_carts: 31, purchases: 12, conversion_rate: 9.7 },
-        { variant: 'B', views: 118, add_to_carts: 38, purchases: 17, conversion_rate: 14.4 },
-      ]);
+      setAbResults([]);
       setSubscribers([]);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -82,6 +83,7 @@ export default function AdminPage() {
 
   const tabs = [
     { id: 'orders', label: 'Orders', icon: ShoppingBag },
+    { id: 'products', label: 'Products', icon: Package },
     { id: 'ab', label: 'A/B Tests', icon: BarChart2 },
     { id: 'subscribers', label: 'Subscribers', icon: Mail },
   ] as const;
@@ -110,13 +112,18 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {loadError && (
+          <div className="card p-4 mb-6 bg-red-50 border border-red-200 text-sm text-red-700">
+            Could not load live data from Supabase: {loadError}
+          </div>
+        )}
+
         {activeTab === 'orders' && (
           <div>
             <h2 className="font-display font-700 text-xl text-text-primary mb-5">Recent Orders</h2>
             {orders.length === 0 ? (
               <div className="card p-10 text-center text-text-secondary">
                 <p>No orders yet. Orders will appear here once customers checkout.</p>
-                <p className="text-xs mt-2 text-gray-400">Connect Supabase to see live data.</p>
               </div>
             ) : (
               <div className="card overflow-hidden">
@@ -140,6 +147,50 @@ export default function AdminPage() {
                           <span className={`badge ${o.status === 'paid' ? 'badge-green' : 'bg-gray-100 text-gray-500'}`}>{o.status}</span>
                         </td>
                         <td className="px-4 py-3 text-text-secondary">{new Date(o.created_at).toLocaleDateString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'products' && (
+          <div>
+            <h2 className="font-display font-700 text-xl text-text-primary mb-5">
+              Products ({products.length})
+            </h2>
+            {products.length === 0 ? (
+              <div className="card p-10 text-center text-text-secondary">
+                <p>No products found in Supabase.</p>
+              </div>
+            ) : (
+              <div className="card overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50 text-text-secondary">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-medium">Name</th>
+                      <th className="px-4 py-3 text-left font-medium">Category</th>
+                      <th className="px-4 py-3 text-left font-medium">Price</th>
+                      <th className="px-4 py-3 text-left font-medium">Stock</th>
+                      <th className="px-4 py-3 text-left font-medium">Rating</th>
+                      <th className="px-4 py-3 text-left font-medium">Reviews</th>
+                      <th className="px-4 py-3 text-left font-medium">Featured</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map((p: any) => (
+                      <tr key={p.id} className="border-t border-gray-50">
+                        <td className="px-4 py-3 font-medium text-text-primary">{p.name}</td>
+                        <td className="px-4 py-3 text-text-secondary">{p.category}</td>
+                        <td className="px-4 py-3 font-semibold text-primary">{formatPrice(p.price)}</td>
+                        <td className="px-4 py-3">{p.stock}</td>
+                        <td className="px-4 py-3">{p.rating?.toFixed?.(1) ?? p.rating}</td>
+                        <td className="px-4 py-3">{p.review_count}</td>
+                        <td className="px-4 py-3">
+                          {p.is_featured ? <span className="badge-green text-xs">Featured</span> : <span className="text-gray-400 text-xs">—</span>}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -184,11 +235,20 @@ export default function AdminPage() {
                 </div>
               ))}
             </div>
-            <div className="card p-4 bg-amber-50 border border-amber-200">
-              <p className="text-sm text-amber-800">
-                <strong>Variant B</strong> (urgency-focused layout with social proof) shows higher conversion rates. Consider making it the default layout.
-              </p>
-            </div>
+            {(() => {
+              const a = abResults.find((x) => x.variant === 'A');
+              const b = abResults.find((x) => x.variant === 'B');
+              if (!a || !b || a.views + b.views === 0) return null;
+              const leader = b.conversion_rate > a.conversion_rate ? b : a;
+              const other = leader === b ? a : b;
+              return (
+                <div className="card p-4 bg-amber-50 border border-amber-200">
+                  <p className="text-sm text-amber-800">
+                    <strong>Variant {leader.variant}</strong> currently has the higher conversion rate ({leader.conversion_rate.toFixed(1)}% vs {other.conversion_rate.toFixed(1)}%) based on {a.views + b.views} total views so far.
+                  </p>
+                </div>
+              );
+            })()}
           </div>
         )}
 
@@ -200,7 +260,6 @@ export default function AdminPage() {
             {subscribers.length === 0 ? (
               <div className="card p-10 text-center text-text-secondary">
                 <p>No subscribers yet. Subscribers will appear here after the email popup converts.</p>
-                <p className="text-xs mt-2 text-gray-400">Connect Supabase to see live data.</p>
               </div>
             ) : (
               <div className="card overflow-hidden">
